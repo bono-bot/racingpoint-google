@@ -1,0 +1,9 @@
+{
+  "name": "@racingpoint/google",
+  "version": "1.0.0",
+  "description": "Shared Google Workspace services for RacingPoint bots",
+  "main": "index.js",
+  "dependencies": {
+    "googleapis": "^144.0.0"
+  }
+}
