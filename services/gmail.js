@@ -98,6 +98,41 @@ async function readEmail({ auth, messageId }) {
   };
 }
 
+async function replyEmail({ auth, messageId, body }) {
+  const gmail = getGmail(auth);
+
+  const original = await readEmail({ auth, messageId });
+
+  const replyTo = original.from;
+  const subject = original.subject.startsWith('Re:')
+    ? original.subject
+    : `Re: ${original.subject}`;
+
+  const inReplyTo = original.messageIdHeader || messageId;
+
+  const raw = [
+    `To: ${replyTo}`,
+    `Subject: ${subject}`,
+    `In-Reply-To: ${inReplyTo}`,
+    `References: ${inReplyTo}`,
+    'Content-Type: text/plain; charset=utf-8',
+    '',
+    body,
+  ].join('\r\n');
+
+  const encoded = Buffer.from(raw).toString('base64url');
+
+  const res = await gmail.users.messages.send({
+    userId: 'me',
+    requestBody: {
+      raw: encoded,
+      threadId: original.threadId || undefined,
+    },
+  });
+
+  return { id: res.data.id, threadId: res.data.threadId, to: replyTo };
+}
+
 async function markAsRead({ auth, messageId }) {
   const gmail = getGmail(auth);
 
@@ -108,4 +143,4 @@ async function markAsRead({ auth, messageId }) {
   });
 }
 
-module.exports = { sendEmail, listInbox, readEmail, markAsRead };
+module.exports = { sendEmail, listInbox, readEmail, markAsRead, replyEmail };
