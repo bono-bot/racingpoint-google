@@ -1,1 +1,18 @@
 node_modules/
+
+# Added by Phase 170 — repo hygiene
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+token.json
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/settings.json
+.idea/
+dist/
+build/
+*.tsbuildinfo
